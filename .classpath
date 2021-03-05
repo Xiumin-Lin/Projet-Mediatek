@@ -7,5 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/mediatek.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-8.0.23.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="output" path="classes"/>
 </classpath>

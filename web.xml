@@ -1,0 +1,11 @@
+<web-app>
+<!--     <servlet>
+        <servlet-name>undefine</servlet-name>
+        <servlet-class>persistantdata.MediatekData</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>undefine</servlet-name>
+        <url-pattern>/undefine</url-pattern>
+    </servlet-mapping> -->
+</web-app>
