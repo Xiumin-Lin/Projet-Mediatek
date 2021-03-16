@@ -13,7 +13,7 @@
 			<div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-left">
 				<div class="h-2 bg-green-600 rounded-t-md"></div>
 				<div class="py-6 px-8">
-					<form action="." method="POST">
+					<form action="." method="GET">
 						<label class="block font-semibold">Label<label>
 							<input type="text" name="label" required placeholder="Label" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
 						<label class="block mt-3 font-semibold">Description<label>
@@ -34,6 +34,16 @@
 					</form>
 				</div>
         	</div>
+			<span class="text-2xl font-light"> <!--Indicates if a new document was created successfully or not-->
+				<%
+					Boolean docIsCreated = (Boolean) request.getAttribute("docIsCreated");
+					if(docIsCreated != null){
+						String newDocID = request.getParameter("newDocID");
+						String label = request.getParameter("label");
+						out.print("Document n°" + newDocID + " '" + label + "' has been created !"); 
+					}
+            	%>
+			</span>
     	</div>
         <div class="relative py-3 sm:max-w-xl mx-auto text-center">
             <span class="text-2xl font-light">Delete a document</span>
@@ -42,11 +52,20 @@
 				<div class="py-6 px-8">
 					<form action="." method="GET">
 						<label class="block font-semibold">Document<label>
-							<input type="number" name="id" min="0" required placeholder="ID" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
+							<input type="number" name="deleteDocID" min="0" required placeholder="Document ID" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
                   		<button class="mt-4 bg-red-600 text-white py-2 px-6 rounded-lg">Delete</button>
 					</form>
               	</div>
             </div>
+			<span class="text-2xl font-light"> <!--Indicates if the document ID was deleted successfully or not-->
+				<%
+					Boolean docNotFound = (Boolean) request.getAttribute("docNotFound");
+					if(docNotFound != null){
+						String docID = request.getParameter("deleteDocID");
+						out.print("Document not found for ID : " + docID); 
+					}
+            	%>
+			</span>
         </div>
     </div>
 </body>

@@ -2,12 +2,12 @@ package persistantdata;
 
 import mediatek2021.Utilisateur;
 
-public class Client implements Utilisateur {
+public class User implements Utilisateur {
 	private String login;
 	private String pwd;
 	private Object[] data;
 	
-	public Client(String login,String pwd, Object[] data) {
+	public User(String login,String pwd, Object[] data) {
 		this.login = login;
 		this.pwd = pwd;
 		this.data = data;
