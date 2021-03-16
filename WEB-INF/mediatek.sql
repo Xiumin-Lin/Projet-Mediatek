@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `document`;
 DROP TABLE IF EXISTS `type`;
-DROP TABLE IF EXISTS `livre`;
+DROP TABLE IF EXISTS `book`;
 DROP TABLE IF EXISTS `dvd`;
 DROP TABLE IF EXISTS `cd`;
 
@@ -11,7 +11,6 @@ CREATE TABLE `user` (
 `pwd` VARCHAR(256) NOT NULL,
 `name` VARCHAR(30),
 `age` INT UNSIGNED,
-`mail` VARCHAR(30),
 `address` VARCHAR(30),
 `isAdmin` TINYINT(1) NOT NULL
 );
@@ -24,8 +23,8 @@ CREATE TABLE `document` (
 `id_type` INT NOT NULL
 );
 
-CREATE TABLE `livre` (
-`id_livre` INT PRIMARY KEY,
+CREATE TABLE `book` (
+`id_book` INT PRIMARY KEY,
 `auteur` VARCHAR(30),
 `nbPage` INT UNSIGNED
 );
@@ -57,9 +56,9 @@ ADD CONSTRAINT `FK_document_type`
 	ON DELETE CASCADE
 ;
 
-ALTER TABLE `livre`
-ADD CONSTRAINT `FK_livre_doc`
-	FOREIGN KEY(`id_livre`)
+ALTER TABLE `book`
+ADD CONSTRAINT `FK_book_doc`
+	FOREIGN KEY(`id_book`)
 	REFERENCES `document`(`id_doc`)
 	ON DELETE CASCADE
 ;
@@ -77,22 +76,24 @@ ADD CONSTRAINT `FK_cd_doc`
 	REFERENCES `document`(`id_doc`)
 	ON DELETE CASCADE
 ;
-
-INSERT INTO `user`(`login`,`pwd`,`isAdmin`) VALUES("Admin","Admin",1);
-INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`mail`,`isAdmin`) 
-VALUES("Lin","Lin","Xiumin",20,"Xiumin.lin@laposte.net",0);
-
-INSERT INTO `type`(`typeName`) VALUES("Livre");
-INSERT INTO `type`(`typeName`) VALUES("DVD");
-INSERT INTO `type`(`typeName`) VALUES("CD");
-
+-- INSERT USER
+INSERT INTO `user`(`login`,`pwd`,`isAdmin`) VALUES("Admin@mediatek.com","admin",1);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) 
+VALUES("Xiumin.lin@laposte.net","1234","Xiumin Lin",20,0);
+-- INSERT TYPE
+INSERT INTO `type`(`typeName`) VALUES("book");
+INSERT INTO `type`(`typeName`) VALUES("dvd");
+INSERT INTO `type`(`typeName`) VALUES("cd");
+-- INSERT DOCUMENT
 INSERT INTO `document`(`title`,`description`,`id_type`) 
 VALUES("Le Parfum","Le Parfum, sous-titré Histoire d'un meurtrier",1);
 INSERT INTO `document`(`title`,`id_type`) VALUES("Les Évadés",2);
-INSERT INTO `document`(`title`,`id_type`) VALUES("Un CD",3);
-
-INSERT INTO `livre` VALUES(1,"Patrick Susking",300);
+INSERT INTO `document`(`title`,`id_type`) VALUES("Album inconnu",3);
+-- INSERT BOOK
+INSERT INTO `book` VALUES(1,"Patrick Susking",300);
+-- INSERT DVD
 INSERT INTO `dvd` VALUES(2,"Frank Darabont",1994,142);
+-- INSERT CD
 INSERT INTO `cd` VALUES(3);
 
 COMMIT;

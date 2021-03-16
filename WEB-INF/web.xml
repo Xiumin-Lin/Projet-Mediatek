@@ -1,11 +1,11 @@
 <web-app>
-<!--     <servlet>
-        <servlet-name>undefine</servlet-name>
-        <servlet-class>persistantdata.MediatekData</servlet-class>
+    <servlet>
+        <servlet-name>loginServlet</servlet-name>
+        <servlet-class>services.LoginServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>undefine</servlet-name>
-        <url-pattern>/undefine</url-pattern>
-    </servlet-mapping> -->
+        <servlet-name>loginServlet</servlet-name>
+        <url-pattern>/loginServlet</url-pattern>
+    </servlet-mapping>
 </web-app>

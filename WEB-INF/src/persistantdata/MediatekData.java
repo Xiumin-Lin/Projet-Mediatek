@@ -1,5 +1,10 @@
 package persistantdata;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import mediatek2021.*;
@@ -14,7 +19,17 @@ public class MediatekData implements PersistentMediatek {
 		Mediatek.getInstance().setData(new MediatekData());
 	}
 
+	private static String url = "jdbc:mysql://localhost:3306/mediatek";
+	private static String user = "root";
+	private static String pwd = "";
+	
 	private MediatekData() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch(ClassNotFoundException e) {
+			System.err.println("The class was not found");
+			e.printStackTrace();
+		}
 	}
 
 	// renvoie la liste de tous les documents de la bibliotheque
@@ -27,6 +42,33 @@ public class MediatekData implements PersistentMediatek {
 	// si pas trouvé, renvoie null
 	@Override
 	public Utilisateur getUser(String login, String password) {
+		String userName = "";
+		String userPwd = "";
+		int userIsAdmin = 0;
+		try {
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			
+			PreparedStatement ps = connect.prepareStatement("SELECT login,pwd,isAdmin FROM user WHERE login=?");
+			ps.setString(1, login);
+			ResultSet res = ps.executeQuery();
+			
+			while(res.next()) {
+				userName = res.getString(1);
+				userPwd = res.getString(2);
+				userIsAdmin = res.getInt(3);
+			}
+			connect.close();
+		} catch (SQLException e) {
+			System.err.println("Error connection in db");
+			e.printStackTrace();
+		}
+		//request success
+		if(login.equals(userName) && password.equals(userPwd)) {
+			Object[] data = null; //TODO change null value
+			if(userIsAdmin == 1)
+				return new Librarian(login,password,data);
+			return new Client(login,password,data);
+		}
 		return null;
 	}
 
