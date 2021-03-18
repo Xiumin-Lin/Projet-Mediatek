@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class AddDocumentServlet extends HttpServlet {
+public class AddDocServlet extends HttpServlet {
 
 	/**
 	 * 

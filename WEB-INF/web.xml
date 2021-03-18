@@ -18,4 +18,16 @@
         <servlet-name>logoutServlet</servlet-name>
         <url-pattern>/logoutServlet</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>deleteDocServlet</servlet-name>
+        <servlet-class>services.DeleteDocServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>deleteDocServlet</servlet-name>
+        <url-pattern>/deleteDocServlet</url-pattern>
+    </servlet-mapping>
+
+    
 </web-app>

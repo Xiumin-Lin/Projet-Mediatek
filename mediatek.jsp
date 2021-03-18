@@ -55,7 +55,7 @@
             <div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-left">
 				<div class="h-2 bg-red-500 rounded-t-md"></div>
 				<div class="py-6 px-8">
-					<form action="./mediatek.jsp" method="GET">
+					<form action="./deleteDocServlet" method="GET">
 						<label class="block font-semibold">Document<label>
 							<input type="number" name="deleteDocID" min="0" required placeholder="Document ID" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
                   		<button class="mt-4 bg-red-600 text-white py-2 px-6 rounded-lg">Delete</button>
@@ -64,10 +64,21 @@
             </div>
 			<span class="text-2xl font-light"> <!--Indicates if the document ID was deleted successfully or not-->
 				<%
-					Boolean docNotFound = (Boolean) request.getAttribute("docNotFound");
-					if(docNotFound != null){
-						String docID = request.getParameter("deleteDocID");
-						out.print("Document not found for ID : " + docID); 
+					Boolean docIdError = (Boolean) request.getAttribute("deleteDocIdError");
+					Boolean deleteFail = (Boolean) request.getAttribute("deleteDocIdFail");
+					if(docIdError == null && deleteFail == null) { 
+						return;
+					}
+					if(docIdError != null){
+						out.print("The ID should be a positive number");
+					} else {
+						if(deleteFail == null) {
+							String docId = request.getParameter("docIdToDelete");
+							out.print("Document not found for ID : " + docId); 
+						} else {
+							out.print("Document deleted successfully");
+						}
+				
 					}
             	%>
 			</span>
