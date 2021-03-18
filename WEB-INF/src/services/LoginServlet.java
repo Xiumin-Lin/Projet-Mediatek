@@ -11,7 +11,7 @@ import mediatek2021.Mediatek;
 import mediatek2021.Utilisateur;
 
 /**
- * Servlet using to check if information entered in the user login form is valid
+ * Servlet used to check if information entered in the user login form is valid
  */
 public class LoginServlet extends HttpServlet {
 	
@@ -36,11 +36,10 @@ public class LoginServlet extends HttpServlet {
 		//return current session, if it does not exist, then it will create a new session
 		HttpSession session = request.getSession(true);
 		session.setAttribute("user", user);
-		//if user is a not a librarian, redirect to mediatek.jsp
-		if(true) {
+		
+		if(true) { //TODO if user is a not a librarian, hide button to mediatek.jsp
 			request.getRequestDispatcher("./index.jsp").forward(request, response); 
 		}
-		response.sendRedirect("./mediatek.jsp");
 	}
 
 }

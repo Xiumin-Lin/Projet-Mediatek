@@ -42,18 +42,16 @@ public class MediatekData implements PersistentMediatek {
 	// si pas trouvé, renvoie null
 	@Override
 	public Utilisateur getUser(String login, String password) {
-		String userName = "";
 		String userPwd = "";
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
 			
-			PreparedStatement ps = connect.prepareStatement("SELECT login,pwd,isAdmin FROM user WHERE login=?");
+			PreparedStatement ps = connect.prepareStatement("SELECT pwd FROM user WHERE login=?");
 			ps.setString(1, login);
 			ResultSet res = ps.executeQuery();
 			
 			while(res.next()) {
-				userName = res.getString(1);
-				userPwd = res.getString(2);
+				userPwd = res.getString(1);
 			}
 			connect.close();
 		} catch (SQLException e) {
@@ -61,7 +59,7 @@ public class MediatekData implements PersistentMediatek {
 			e.printStackTrace();
 		}
 		//request success
-		if(login.equals(userName) && password.equals(userPwd)) { //TODO no need to check login, the request already did the job
+		if(password.equals(userPwd)) {
 			Object[] data = null; //TODO change null value
 			return new User(login,password,data);
 		}

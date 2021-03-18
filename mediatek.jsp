@@ -13,13 +13,18 @@
 			<div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-left">
 				<div class="h-2 bg-green-600 rounded-t-md"></div>
 				<div class="py-6 px-8">
-					<form action="." method="GET">
+					<form action="./mediatek.jsp" method="GET">
 						<label class="block font-semibold">Label<label>
 							<input type="text" name="label" required placeholder="Label" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
 						<label class="block mt-3 font-semibold">Description<label>
-							<textarea type="text" name="description" placeholder="Description..." class="resize border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md"></textarea>
+							<textarea type="text" name="description" placeholder="Description..." class="resize border w-full h-20 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md"></textarea>
 						<label class="block mt-3 font-semibold">Type<label>
-							<select type="text" name="type" required class="resize border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md"></select>
+							<select type="text" name="type" required class="resize border w-full h-15 px-3 py-2 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
+								<option value="">-- Type of the document --</option>
+								<option value="1">BOOK</option>
+								<option value="2">DVD</option>
+								<option value="3">CD</option>
+							</select>
 						<label class="block mt-3 font-semibold">Author<label>
 							<input type="text" name="author" placeholder="Author" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
 						<label class="block mt-3 font-semibold">Number of pages<label>
@@ -50,7 +55,7 @@
             <div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-left">
 				<div class="h-2 bg-red-500 rounded-t-md"></div>
 				<div class="py-6 px-8">
-					<form action="." method="GET">
+					<form action="./mediatek.jsp" method="GET">
 						<label class="block font-semibold">Document<label>
 							<input type="number" name="deleteDocID" min="0" required placeholder="Document ID" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
                   		<button class="mt-4 bg-red-600 text-white py-2 px-6 rounded-lg">Delete</button>

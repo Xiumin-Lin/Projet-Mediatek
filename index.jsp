@@ -12,7 +12,7 @@
           	<span class="text-2xl font-light">Welcome to the Mediatek</span>
           	<div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-center">
             	<div class="h-2 bg-green-600 rounded-t-md"></div>
-            	<div class="py-6 px-8">
+            	<div class="py-6 px-8"> <!--displays buttons depending on whether the user is logged in or not-->
 					<%@ page import = "mediatek2021.Utilisateur" %>
 					<%
 						Utilisateur user = (Utilisateur) session.getAttribute("user");
