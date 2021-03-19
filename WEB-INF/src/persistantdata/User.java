@@ -27,5 +27,4 @@ public class User implements Utilisateur {
 	public String password() {
 		return pwd;
 	}
-
 }

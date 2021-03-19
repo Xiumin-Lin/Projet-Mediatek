@@ -34,8 +34,5 @@ public class AddDocServlet extends HttpServlet {
 				request.setAttribute("userNotFound",true);
 				request.getRequestDispatcher("./login.jsp").forward(request, response); 
 		}
-		
-		
 	}
-
 }

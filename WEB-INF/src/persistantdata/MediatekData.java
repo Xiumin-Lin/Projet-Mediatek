@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ArrayList;
 
 import mediatek2021.*;
 
@@ -27,7 +28,7 @@ public class MediatekData implements PersistentMediatek {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		} catch(ClassNotFoundException e) {
-			System.err.println("The class was not found");
+			System.err.println("MySQL JDBC Driver was not found");
 			e.printStackTrace();
 		}
 	}
@@ -35,7 +36,26 @@ public class MediatekData implements PersistentMediatek {
 	// renvoie la liste de tous les documents de la bibliotheque
 	@Override
 	public List<Document> catalogue(int type) {
-		return null;
+		List<Document> catalogue = new ArrayList<>();
+		try {
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			//retrieve all doc ID corresponding to the chosen type
+			PreparedStatement ps = connect.prepareStatement("SELECT id_doc FROM document WHERE id_type=?");
+			ps.setInt(1, type);
+			ResultSet res = ps.executeQuery();
+			//retrieve each doc by their ID & add in catalogue
+			while(res.next()) {
+				Document doc = getDocument(res.getInt(1));
+				if(doc != null)
+					catalogue.add(doc);
+			}
+			connect.close();
+		} catch (SQLException e) {
+			System.err.println("Error connection in db : " + e.getMessage());
+			e.printStackTrace();
+		}
+		//return catalogue if there a one doc or more, otherwise return null
+		return (catalogue.size() > 0) ? catalogue : null;
 	}
 
 	// va recuperer le User dans la BD et le renvoie
@@ -43,26 +63,32 @@ public class MediatekData implements PersistentMediatek {
 	@Override
 	public Utilisateur getUser(String login, String password) {
 		String userPwd = "";
+		List<Object> data = new ArrayList<>();
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
 			
-			PreparedStatement ps = connect.prepareStatement("SELECT pwd FROM user WHERE login=?");
+			PreparedStatement ps = connect.prepareStatement("SELECT * FROM user WHERE login=?");
 			ps.setString(1, login);
 			ResultSet res = ps.executeQuery();
 			
 			while(res.next()) {
-				userPwd = res.getString(1);
+				userPwd = res.getString(3);
+				data.add(res.getString(4)); //[0] => name
+				data.add(res.getInt(5));		//[1] => age
+				data.add(res.getString(6));	//[2] => adress
+				Boolean isAdmin = (res.getInt(7) == 1) ? true : false;
+				data.add(isAdmin); //[3] => isAdmin
 			}
 			connect.close();
 		} catch (SQLException e) {
-			System.err.println("Error connection in db");
+			System.err.println("Error connection in db : " + e.getMessage());
 			e.printStackTrace();
 		}
-		//request success
+		//check pwd
 		if(password.equals(userPwd)) {
-			Object[] data = null; //TODO change null value
-			return new User(login,password,data);
+			return new User(login,password,data.toArray());
 		}
+		//wrong pwd
 		return null;
 	}
 
@@ -71,7 +97,24 @@ public class MediatekData implements PersistentMediatek {
 	// si pas trouvé, renvoie null
 	@Override
 	public Document getDocument(int numDocument) {
-		return null;
+		Document doc = null;
+		try {
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			//retrieve all doc ID corresponding to the chosen type
+			PreparedStatement ps = connect.prepareStatement("SELECT * FROM document WHERE id_doc=?");
+			ps.setInt(1, numDocument);
+			ResultSet res = ps.executeQuery();
+			//retrieve each doc by their ID & add in catalogue
+			while(res.next()) {
+				doc = DocumentFactory.create(res.getInt(1), res.getString(2), res.getString(3), res.getInt(4), res.getInt(5));
+			}
+			connect.close();
+		} catch (SQLException e) {
+			System.err.println("Error connection in db : " + e.getMessage());
+			e.printStackTrace();
+		}
+		//return catalogue if there a one doc or more, otherwise return null
+		return doc;
 	}
 
 	// ajoute un nouveau document - exception a definir

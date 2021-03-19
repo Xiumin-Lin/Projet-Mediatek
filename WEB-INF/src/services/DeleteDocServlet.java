@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import mediatek2021.Document;
 import mediatek2021.Mediatek;
 import mediatek2021.SuppressException;
+import mediatek2021.Utilisateur;
 
 public class DeleteDocServlet extends HttpServlet {
 
@@ -21,19 +22,14 @@ public class DeleteDocServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		//get the document id typed by the user to delete
+		
 		int docIdToDelete = -1;
-		HttpSession session = request.getSession(false);
-		if(session != null) {
-			response.sendRedirect("./index.jsp");
-			return; //had to return otherwise code won't stop
-		}
 		
 		try {
 			docIdToDelete = Integer.parseInt(request.getParameter("deleteDocID"));
-		
 		} catch (Exception e) {
-			System.err.println("blabla");
+			e.printStackTrace();
+			System.err.println("Parse Int Error : " + e.getMessage());
 		}
 
 		if(docIdToDelete < 0) {
@@ -44,24 +40,18 @@ public class DeleteDocServlet extends HttpServlet {
 			Document doc = mediatek.getDocument(docIdToDelete);
 			// if the document does not exist then it well set the attribute docNotFound to true, 
 			// else it will delete the document using its ID
-			if(doc == null) { 
+			if(doc == null) {
 				request.setAttribute("deleteDocIdFail", true);
-				
 			} else {
 				request.setAttribute("deleteDocIdFail", false);
 				try {
 					mediatek.suppressDoc(docIdToDelete);
 				} catch (SuppressException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					System.err.println("Fail to suppress document : " + e.getMessage());
 				}
 			}
 		}
-		
 		request.getRequestDispatcher("./mediatek.jsp").forward(request, response);
-			
 	}
-	
-
-
 }
