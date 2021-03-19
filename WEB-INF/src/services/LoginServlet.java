@@ -37,9 +37,7 @@ public class LoginServlet extends HttpServlet {
 		HttpSession session = request.getSession(true);
 		session.setAttribute("user", user);
 		
-		if(true) { //TODO if user is a not a librarian, hide button to mediatek.jsp
-			request.getRequestDispatcher("./index.jsp").forward(request, response); 
-		}
+		response.sendRedirect("./index.jsp"); 
 	}
 
 }

@@ -13,7 +13,7 @@
 			<div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-left">
 				<div class="h-2 bg-green-600 rounded-t-md"></div>
 				<div class="py-6 px-8">
-					<form action="./mediatek.jsp" method="GET">
+					<form action="./addDocServlet" method="GET">
 						<label class="block font-semibold">Label<label>
 							<input type="text" name="label" required placeholder="Label" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
 						<label class="block mt-3 font-semibold">Description<label>
@@ -66,19 +66,16 @@
 				<%
 					Boolean docIdError = (Boolean) request.getAttribute("deleteDocIdError");
 					Boolean deleteFail = (Boolean) request.getAttribute("deleteDocIdFail");
-					if(docIdError == null && deleteFail == null) { 
-						return;
-					}
+
 					if(docIdError != null){
 						out.print("The ID should be a positive number");
-					} else {
-						if(deleteFail == null) {
-							String docId = request.getParameter("docIdToDelete");
+					} else if(deleteFail != null){
+						if(deleteFail) {
+							String docId = request.getParameter("deleteDocID");
 							out.print("Document not found for ID : " + docId); 
 						} else {
 							out.print("Document deleted successfully");
 						}
-				
 					}
             	%>
 			</span>

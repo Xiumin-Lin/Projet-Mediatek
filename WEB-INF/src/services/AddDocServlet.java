@@ -17,7 +17,7 @@ public class AddDocServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		String label = request.getParameter("label");
+		String title = request.getParameter("label");
 		String descrip = request.getParameter("description");
 		String type = request.getParameter("type");
 		

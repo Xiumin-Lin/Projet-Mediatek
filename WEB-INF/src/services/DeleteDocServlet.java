@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import mediatek2021.Document;
 import mediatek2021.Mediatek;
@@ -22,14 +23,17 @@ public class DeleteDocServlet extends HttpServlet {
 			throws ServletException, IOException {
 		//get the document id typed by the user to delete
 		int docIdToDelete = -1;
-		
+		HttpSession session = request.getSession(false);
+		if(session != null) {
+			response.sendRedirect("./index.jsp");
+			return; //had to return otherwise code won't stop
+		}
 		
 		try {
 			docIdToDelete = Integer.parseInt(request.getParameter("deleteDocID"));
 		
 		} catch (Exception e) {
 			System.err.println("blabla");
-			// TODO: handle exception
 		}
 
 		if(docIdToDelete < 0) {

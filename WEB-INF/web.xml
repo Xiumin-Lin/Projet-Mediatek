@@ -20,6 +20,16 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>addDocServlet</servlet-name>
+        <servlet-class>services.AddDocServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>addDocServlet</servlet-name>
+        <url-pattern>/addDocServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>deleteDocServlet</servlet-name>
         <servlet-class>services.DeleteDocServlet</servlet-class>
     </servlet>
@@ -28,6 +38,4 @@
         <servlet-name>deleteDocServlet</servlet-name>
         <url-pattern>/deleteDocServlet</url-pattern>
     </servlet-mapping>
-
-    
 </web-app>
