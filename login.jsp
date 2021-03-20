@@ -22,12 +22,11 @@
 					</form>
 				</div>
             </div>
-			<span class="text-2xl font-light"> <!--Display a message if user is invalid-->
+			<span class="mt-4 text-2xl font-light"> <!--Display a message if user is invalid-->
 				<%
-					Boolean userNotFound = (Boolean) request.getAttribute("userNotFound");
+					String userNotFound = (String) request.getAttribute("userNotFound");
 					if(userNotFound != null){
-						String login = request.getParameter("login");
-						out.print("User not found or wrong password for : " + login); 
+						out.print(userNotFound); 
 					}
             	%>
 			</span>

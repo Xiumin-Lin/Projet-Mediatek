@@ -15,7 +15,7 @@
 			<div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-left">
 				<div class="h-2 bg-green-600 rounded-t-md"></div>
 				<div class="py-6 px-8">
-					<form action="./addDocServlet" method="GET">
+					<form action="./addDocServlet" method="POST">
 						<label class="block font-semibold">Label<label>
 						<input type="text" name="label" required placeholder="Label" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
 						
@@ -71,7 +71,7 @@
             <div class="relative mt-4 bg-white shadow-md sm:rounded-lg text-left">
 				<div class="h-2 bg-red-500 rounded-t-md"></div>
 				<div class="py-6 px-8">
-					<form action="./deleteDocServlet" method="GET">
+					<form action="./deleteDocServlet" method="POST">
 						<label class="block font-semibold">Document<label>
 							<input type="number" name="deleteDocID" min="0" required placeholder="Document ID" class="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-1 focus:ring-indigo-600 rounded-md">
                   		<button class="mt-4 bg-red-600 text-white py-2 px-6 rounded-lg">Delete</button>

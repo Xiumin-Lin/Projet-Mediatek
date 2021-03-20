@@ -102,30 +102,53 @@ public class MediatekData implements PersistentMediatek {
 		Document doc = null;
 		List<Object> data = new ArrayList<>();
 		try {
-			Connection connect = DriverManager.getConnection(url, user, pwd); //TODO
-			//retrieve all doc ID corresponding to the chosen type
-			String sql = 	"SELECT doc.title, doc.description, doc.id_borrower, doc.id_type "
-									+ "FROM document doc "
-									+ "WHERE doc.id_doc=?";
-			PreparedStatement ps = connect.prepareStatement(sql);
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			//retrieve the general doc data corresponding to id doc
+			String getDocSQL = 	"SELECT title, description, id_borrower, id_type "
+												+ "FROM document "
+												+ "WHERE id_doc=?";
+			PreparedStatement ps = connect.prepareStatement(getDocSQL);
 			ps.setInt(1, numDocument);
 			ResultSet res = ps.executeQuery();
+			int type = -1;
 			while(res.next()) {
-				int type = res.getInt("id_type");
+				type = res.getInt("id_type");
 				data.add(numDocument);			//[0] --> doc id
 				data.add(res.getString(1));	//[1] --> title
 				data.add(res.getString(2));	//[2] --> description
-				data.add(res.getInt(3));		//[3] --> id_borrower
-				data.add(type);							//[5] --> type
-				doc = DocumentFactory.create(type, data.toArray());
+				data.add(res.getInt(3));		//[3] --> id_borrower, if res.getInt(3) is null, return 0
+				data.add(type);							//[4] --> type
 			}
 			ps.close();
+			
+			//set the statement corresponding to the doc type
+			String getTypeDocSQL;
+			switch (type) {
+				case 1: getTypeDocSQL = "SELECT * FROM book WHERE id_book=?"; break;
+				case 2: getTypeDocSQL = "SELECT * FROM dvd WHERE id_dvd=?"; break;
+				case 3: getTypeDocSQL = "SELECT * FROM cd WHERE id_cd=?"; break;
+				default:
+					throw new SQLException("The statement to prepare is null");
+			}
+			//retrieve the typed doc data corresponding to id doc
+			PreparedStatement ps2 = connect.prepareStatement(getTypeDocSQL);
+			ps2.setObject(1, data.get(0)); //data.get(0) --> id_doc
+			ResultSet typeDocRes = ps2.executeQuery();
+			int nbColumns = typeDocRes.getMetaData().getColumnCount();
+			while(typeDocRes.next()) {
+				for(int i=1; i <= nbColumns; i++) {
+					data.add(typeDocRes.getObject(i));
+				}
+			}
+			ps2.close();
+			//insert doc data in the class corresponding to his type
+			doc = DocumentFactory.create(type, data.toArray());
 			connect.close();
 		} catch (SQLException e) {
 			System.err.println("Error connection in db : " + e.getMessage());
 			e.printStackTrace();
 		}
-		//return catalogue if there a one doc or more, otherwise return null
+		//return doc if sql requests success, otherwise return null
 		return doc;
 	}
 
@@ -182,7 +205,7 @@ public class MediatekData implements PersistentMediatek {
 				}
 				insertRow = ps2.executeUpdate();
 				if (insertRow == 0) {
-	        		throw new NewDocException("Creating typed document failed !");
+	        throw new NewDocException("Creating typed document failed !");
 				}
 				ps2.close();
 			}
