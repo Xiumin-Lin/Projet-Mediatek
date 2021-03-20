@@ -20,6 +20,8 @@ public class DeleteDocServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private static final Object DELETEKEY = new Object();
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
@@ -47,22 +49,24 @@ public class DeleteDocServlet extends HttpServlet {
 		} else {
 			//check if the document exists in the database
 			Mediatek mediatek = Mediatek.getInstance();
-			Document doc = mediatek.getDocument(docIdToDelete);
-			// if the document does not exist then it well set the attribute deleteStatus with a error msg, 
-			// else it will delete the document using its ID
-			if(doc == null) {
-				request.setAttribute("deleteStatus", "Document not found for ID : " + docIdToDelete);
-			} else {
-				//check if the doc is borrowed, if true, admin can't delete the doc
-				if((int) doc.data()[3] > 0) {
-					request.setAttribute("deleteStatus", "Can't Delete the document " + docIdToDelete + ", it's borrowed by the user ID : " + doc.data()[3]);
+			synchronized (DELETEKEY) {
+				Document doc = mediatek.getDocument(docIdToDelete);
+				// if the document does not exist then it well set the attribute deleteStatus with a error msg, 
+				// else it will delete the document using its ID
+				if(doc == null) {
+					request.setAttribute("deleteStatus", "Document not found for ID : " + docIdToDelete);
 				} else {
-					try {
-						mediatek.suppressDoc(docIdToDelete);
-						request.setAttribute("deleteStatus", "Document deleted successfully");
-					} catch (SuppressException e) {
-						e.printStackTrace();
-						request.setAttribute("deleteStatus", "Delete Fail : " + e.getMessage());
+					//check if the doc is borrowed, if true, admin can't delete the doc
+					if((int) doc.data()[3] > 0) {
+						request.setAttribute("deleteStatus", "Can't Delete the document " + docIdToDelete + ", it's borrowed by the user ID : " + doc.data()[3]);
+					} else {
+						try {
+							mediatek.suppressDoc(docIdToDelete);
+							request.setAttribute("deleteStatus", "Document deleted successfully");
+						} catch (SuppressException e) {
+							e.printStackTrace();
+							request.setAttribute("deleteStatus", "Delete Fail : " + e.getMessage());
+						}
 					}
 				}
 			}
