@@ -67,17 +67,18 @@ public class MediatekData implements PersistentMediatek {
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
 			
-			PreparedStatement ps = connect.prepareStatement("SELECT * FROM user WHERE login=?");
+			PreparedStatement ps = connect.prepareStatement("SELECT id_user, pwd, name, age, address, isAdmin FROM user WHERE login=?");
 			ps.setString(1, login);
 			ResultSet res = ps.executeQuery();
 			
 			while(res.next()) {
-				userPwd = res.getString(3);
-				data.add(res.getString(4)); //[0] => name
-				data.add(res.getInt(5));		//[1] => age
-				data.add(res.getString(6));	//[2] => adress
-				Boolean isAdmin = (res.getInt(7) == 1) ? true : false;
-				data.add(isAdmin); //[3] => isAdmin
+				userPwd = res.getString(2);
+				data.add(res.getInt(1)); 		//[0] --> user id
+				data.add(res.getString(3)); //[1] --> name
+				data.add(res.getInt(4));		//[2] --> age
+				data.add(res.getString(5));	//[3] --> address
+				Boolean isAdmin = (res.getInt(6) == 1) ? true : false;
+				data.add(isAdmin); //[4] => isAdmin
 			}
 			connect.close();
 		} catch (SQLException e) {
@@ -98,16 +99,26 @@ public class MediatekData implements PersistentMediatek {
 	@Override
 	public Document getDocument(int numDocument) {
 		Document doc = null;
+		List<Object> data = new ArrayList<>();
 		try {
-			Connection connect = DriverManager.getConnection(url, user, pwd);
+			Connection connect = DriverManager.getConnection(url, user, pwd); //TODO
 			//retrieve all doc ID corresponding to the chosen type
-			PreparedStatement ps = connect.prepareStatement("SELECT * FROM document WHERE id_doc=?");
+			String sql = 	"SELECT doc.title, doc.description, doc.id_borrower, doc.id_type "
+									+ "FROM document doc "
+									+ "WHERE doc.id_doc=?";
+			PreparedStatement ps = connect.prepareStatement(sql);
 			ps.setInt(1, numDocument);
 			ResultSet res = ps.executeQuery();
-			//retrieve each doc by their ID & add in catalogue
 			while(res.next()) {
-				doc = DocumentFactory.create(res.getInt(1), res.getString(2), res.getString(3), res.getInt(4), res.getInt(5));
+				int type = res.getInt("id_type");
+				data.add(numDocument);			//[0] --> doc id
+				data.add(res.getString(1));	//[1] --> title
+				data.add(res.getString(2));	//[2] --> description
+				data.add(res.getInt(3));		//[3] --> id_borrower
+				data.add(type);							//[5] --> type
+				doc = DocumentFactory.create(type, data.toArray());
 			}
+			ps.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.err.println("Error connection in db : " + e.getMessage());
@@ -123,12 +134,20 @@ public class MediatekData implements PersistentMediatek {
 		// args[0] -> le titre
 		// args [1] --> l'auteur
 		// etc en fonction du type et des infos optionnelles
+		
 	}
 
 	// supprime un document - exception a definir
 	@Override
 	public void suppressDoc(int numDoc) throws SuppressException {
-		
+		try {
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			PreparedStatement ps = connect.prepareStatement("DELETE FROM document WHERE id_doc=?");
+			ps.setInt(1, numDoc);
+			ps.executeUpdate();
+			connect.close();
+		} catch (SQLException e) {
+			throw new SuppressException(e.getMessage());
+		}
 	}
-
 }

@@ -64,18 +64,9 @@
             </div>
 			<span class="text-2xl font-light"> <!--Indicates if the document ID was deleted successfully or not-->
 				<%
-					Boolean docIdError = (Boolean) request.getAttribute("deleteDocIdError");
-					Boolean deleteFail = (Boolean) request.getAttribute("deleteDocIdFail");
-
-					if(docIdError != null){
-						out.print("The ID should be a positive number");
-					} else if(deleteFail != null){
-						if(deleteFail) {
-							String docId = request.getParameter("deleteDocID");
-							out.print("Document not found for ID : " + docId); 
-						} else {
-							out.print("Document deleted successfully");
-						}
+					String deleteStatus = (String) request.getAttribute("deleteStatus");
+					if(deleteStatus != null){
+						out.print(deleteStatus);
 					}
             	%>
 			</span>

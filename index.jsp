@@ -23,7 +23,7 @@
 							out.print("</form>");
 						}else if(user != null){
 							out.print("Hi " + user.login() + " !");
-							Boolean isAdmin = (Boolean) user.data()[3];
+							Boolean isAdmin = (Boolean) user.data()[4];
 							if(isAdmin){
 								out.print("<form action='./mediatek.jsp'>");
 								out.print("<button class='mt-4 bg-indigo-500 text-white py-2 px-6 rounded-lg'>Manage Mediatek</button>");
@@ -32,6 +32,10 @@
 							out.print("<form action='./logoutServlet'>");
 							out.print("<button class='mt-4 bg-red-500 text-white py-2 px-6 rounded-lg'>Logout</button>");
 							out.print("</form>");
+						}
+						String noAllow = (String) request.getAttribute("serviceNoAllow");
+						if(noAllow != null){
+							out.print(noAllow);
 						}
 					%>
 				</div>
