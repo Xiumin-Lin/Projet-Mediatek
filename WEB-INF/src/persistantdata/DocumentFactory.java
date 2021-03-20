@@ -3,11 +3,11 @@ package persistantdata;
 import mediatek2021.Document;
 
 public class DocumentFactory {
-	public static Document create(int docId, String title, String descrip, int borrowerId, int type) {
+	public static Document create(int type, Object... data) {
 		switch(type) {
-			case 1: return new Book(docId, title, descrip, borrowerId, DocType.BOOK.getId());
-			case 2: return new DVD(docId, title, descrip, borrowerId, DocType.DVD.getId());
-			case 3: return new CD(docId, title, descrip, borrowerId, DocType.CD.getId());
+			case 1: return new Book(data);
+			case 2: return new DVD(data);
+			case 3: return new CD(data);
 		}
 		return null;
 	}

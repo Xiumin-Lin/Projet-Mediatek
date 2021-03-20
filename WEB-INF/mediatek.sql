@@ -37,7 +37,8 @@ CREATE TABLE `dvd` (
 );
 
 CREATE TABLE `cd` (
-`id_cd` INT PRIMARY KEY
+`id_cd` INT PRIMARY KEY,
+`artist` VARCHAR(30)
 );
 
 CREATE TABLE `type` (
@@ -94,6 +95,6 @@ INSERT INTO `book` VALUES(1,"Patrick Susking",300);
 -- INSERT DVD
 INSERT INTO `dvd` VALUES(2,"Frank Darabont",1994,142);
 -- INSERT CD
-INSERT INTO `cd` VALUES(3);
+INSERT INTO `cd` VALUES(3,NULL);
 
 COMMIT;

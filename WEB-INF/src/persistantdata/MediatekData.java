@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -67,17 +68,18 @@ public class MediatekData implements PersistentMediatek {
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
 			
-			PreparedStatement ps = connect.prepareStatement("SELECT * FROM user WHERE login=?");
+			PreparedStatement ps = connect.prepareStatement("SELECT id_user, pwd, name, age, address, isAdmin FROM user WHERE login=?");
 			ps.setString(1, login);
 			ResultSet res = ps.executeQuery();
 			
 			while(res.next()) {
-				userPwd = res.getString(3);
-				data.add(res.getString(4)); //[0] => name
-				data.add(res.getInt(5));		//[1] => age
-				data.add(res.getString(6));	//[2] => adress
-				Boolean isAdmin = (res.getInt(7) == 1) ? true : false;
-				data.add(isAdmin); //[3] => isAdmin
+				userPwd = res.getString(2);
+				data.add(res.getInt(1)); 		//[0] --> user id
+				data.add(res.getString(3)); //[1] --> name
+				data.add(res.getInt(4));		//[2] --> age
+				data.add(res.getString(5));	//[3] --> address
+				Boolean isAdmin = (res.getInt(6) == 1) ? true : false;
+				data.add(isAdmin); //[4] => isAdmin
 			}
 			connect.close();
 		} catch (SQLException e) {
@@ -98,16 +100,26 @@ public class MediatekData implements PersistentMediatek {
 	@Override
 	public Document getDocument(int numDocument) {
 		Document doc = null;
+		List<Object> data = new ArrayList<>();
 		try {
-			Connection connect = DriverManager.getConnection(url, user, pwd);
+			Connection connect = DriverManager.getConnection(url, user, pwd); //TODO
 			//retrieve all doc ID corresponding to the chosen type
-			PreparedStatement ps = connect.prepareStatement("SELECT * FROM document WHERE id_doc=?");
+			String sql = 	"SELECT doc.title, doc.description, doc.id_borrower, doc.id_type "
+									+ "FROM document doc "
+									+ "WHERE doc.id_doc=?";
+			PreparedStatement ps = connect.prepareStatement(sql);
 			ps.setInt(1, numDocument);
 			ResultSet res = ps.executeQuery();
-			//retrieve each doc by their ID & add in catalogue
 			while(res.next()) {
-				doc = DocumentFactory.create(res.getInt(1), res.getString(2), res.getString(3), res.getInt(4), res.getInt(5));
+				int type = res.getInt("id_type");
+				data.add(numDocument);			//[0] --> doc id
+				data.add(res.getString(1));	//[1] --> title
+				data.add(res.getString(2));	//[2] --> description
+				data.add(res.getInt(3));		//[3] --> id_borrower
+				data.add(type);							//[5] --> type
+				doc = DocumentFactory.create(type, data.toArray());
 			}
+			ps.close();
 			connect.close();
 		} catch (SQLException e) {
 			System.err.println("Error connection in db : " + e.getMessage());
@@ -120,15 +132,77 @@ public class MediatekData implements PersistentMediatek {
 	// ajoute un nouveau document - exception a definir
 	@Override
 	public void newDocument(int type, Object... args) throws NewDocException {
-		// args[0] -> le titre
-		// args [1] --> l'auteur
+		// args[0] --> le titre
+		// args[1] --> l'auteur
 		// etc en fonction du type et des infos optionnelles
+		
+		String insertTypeDocSQL;
+		int nbOptinalArgs = -1;
+		//set insertTypeDocSQL & nbOptinalArgs depending of the doc type
+		switch (type) {
+			case 1: //Book(id_book,artist)
+				insertTypeDocSQL = "INSERT INTO book VALUES(?,?,?)";
+				nbOptinalArgs = 2; break;
+			case 2: //DVD(id_dvd,artist)
+				insertTypeDocSQL = "INSERT INTO dvd VALUES(?,?,?,?)";
+				nbOptinalArgs = 3; break;
+			case 3: //CD(id_cd,artist)
+				insertTypeDocSQL = "INSERT INTO cd VALUES(?,?)";
+				nbOptinalArgs = 1; break;
+			default:
+				throw new NewDocException("Invalide Type of document !");
+		}
+		
+		try {
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			//insert/add a new general document
+			String insertDocSQL = "INSERT INTO `document`(`title`,`description`,`id_type`) " + "VALUES(?,?,?)";
+			PreparedStatement ps1 = connect.prepareStatement(insertDocSQL, Statement.RETURN_GENERATED_KEYS);
+			ps1.setString(1, (String) args[0]); //--> title
+			ps1.setString(2, (String) args[1]); //--> description
+			ps1.setInt(3, type);
+			int insertRow = ps1.executeUpdate();
+			if (insertRow == 0) {
+        		throw new NewDocException("Creating document failed !");
+			} 
+			//retrieves the index of the new created document
+			ResultSet generatedKeys = ps1.getGeneratedKeys();
+			int newDocId = -1;
+			if (generatedKeys.next()) {
+				newDocId = generatedKeys.getInt(1);
+	    	}
+			ps1.close();
+			
+			//insert/add the typed document associate to the general doc create earlier
+			if(newDocId > 0) {
+				PreparedStatement ps2 = connect.prepareStatement(insertTypeDocSQL);
+				ps2.setInt(1, newDocId);
+				for(int i=1; i<=nbOptinalArgs; i++) {
+					ps2.setObject(i+1, args[i+1]);
+				}
+				insertRow = ps2.executeUpdate();
+				if (insertRow == 0) {
+	        		throw new NewDocException("Creating typed document failed !");
+				}
+				ps2.close();
+			}
+			connect.close();
+		} catch (SQLException e) {
+			throw new NewDocException(e.getMessage());
+		}
 	}
 
 	// supprime un document - exception a definir
 	@Override
 	public void suppressDoc(int numDoc) throws SuppressException {
-		
+		try {
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			PreparedStatement ps = connect.prepareStatement("DELETE FROM document WHERE id_doc=?");
+			ps.setInt(1, numDoc);
+			ps.executeUpdate();
+			connect.close();
+		} catch (SQLException e) {
+			throw new SuppressException(e.getMessage());
+		}
 	}
-
 }
