@@ -20,10 +20,12 @@ public class MediatekData implements PersistentMediatek {
 		// injection dynamique de la dependance dans le package stable mediatek2021
 		Mediatek.getInstance().setData(new MediatekData());
 	}
-
-	private static String url = "jdbc:mysql://localhost:3306/mediatek";
-	private static String user = "root";
-	private static String pwd = "";
+	
+	private static final Object ADDKEY = new Object();
+	private static final Object DELETEKEY = new Object();
+	private static final String url = "jdbc:mysql://localhost:3306/mediatek";
+	private static final String user = "root";
+	private static final String pwd = "";
 	
 	private MediatekData() {
 		try {
@@ -43,7 +45,12 @@ public class MediatekData implements PersistentMediatek {
 			//retrieve all doc ID corresponding to the chosen type
 			PreparedStatement ps = connect.prepareStatement("SELECT id_doc FROM document WHERE id_type=?");
 			ps.setInt(1, type);
-			ResultSet res = ps.executeQuery();
+			ResultSet res = null;
+			synchronized (ADDKEY) { 
+				synchronized (DELETEKEY) { //exceute sql only if no add & delete action is running
+					res = ps.executeQuery();
+				}
+			}
 			//retrieve each doc by their ID & add in catalogue
 			while(res.next()) {
 				Document doc = getDocument(res.getInt(1));
@@ -109,7 +116,12 @@ public class MediatekData implements PersistentMediatek {
 												+ "WHERE id_doc=?";
 			PreparedStatement ps = connect.prepareStatement(getDocSQL);
 			ps.setInt(1, numDocument);
-			ResultSet res = ps.executeQuery();
+			ResultSet res = null;
+			synchronized (ADDKEY) { 
+				synchronized (DELETEKEY) {
+					res = ps.executeQuery();
+				}
+			}
 			int type = -1;
 			while(res.next()) {
 				type = res.getInt("id_type");
@@ -133,7 +145,12 @@ public class MediatekData implements PersistentMediatek {
 			//retrieve the typed doc data corresponding to id doc
 			PreparedStatement ps2 = connect.prepareStatement(getTypeDocSQL);
 			ps2.setObject(1, data.get(0)); //data.get(0) --> id_doc
-			ResultSet typeDocRes = ps2.executeQuery();
+			ResultSet typeDocRes = null;
+			synchronized (ADDKEY) {
+				synchronized (DELETEKEY) {
+					typeDocRes = ps2.executeQuery();
+				}
+			}
 			int nbColumns = typeDocRes.getMetaData().getColumnCount();
 			while(typeDocRes.next()) {
 				for(int i=1; i <= nbColumns; i++) {
@@ -184,8 +201,11 @@ public class MediatekData implements PersistentMediatek {
 			ps1.setString(1, (String) args[0]); //--> title
 			ps1.setString(2, (String) args[1]); //--> description
 			ps1.setInt(3, type);
-			int insertRow = ps1.executeUpdate();
-			if (insertRow == 0) {
+			int nbInsertedRow = 0;
+			synchronized(ADDKEY) {
+				nbInsertedRow = ps1.executeUpdate();
+			}
+			if (nbInsertedRow == 0) {
         		throw new NewDocException("Creating document failed !");
 			} 
 			//retrieves the index of the new created document
@@ -193,9 +213,9 @@ public class MediatekData implements PersistentMediatek {
 			int newDocId = -1;
 			if (generatedKeys.next()) {
 				newDocId = generatedKeys.getInt(1);
-	    	}
+	    }
 			ps1.close();
-			
+			nbInsertedRow = 0; //reset number of insertRow
 			//insert/add the typed document associate to the general doc create earlier
 			if(newDocId > 0) {
 				PreparedStatement ps2 = connect.prepareStatement(insertTypeDocSQL);
@@ -203,8 +223,10 @@ public class MediatekData implements PersistentMediatek {
 				for(int i=1; i<=nbOptinalArgs; i++) {
 					ps2.setObject(i+1, args[i+1]);
 				}
-				insertRow = ps2.executeUpdate();
-				if (insertRow == 0) {
+				synchronized (ADDKEY) {
+					nbInsertedRow = ps2.executeUpdate();
+				}
+				if (nbInsertedRow == 0) {
 	        throw new NewDocException("Creating typed document failed !");
 				}
 				ps2.close();
@@ -220,9 +242,12 @@ public class MediatekData implements PersistentMediatek {
 	public void suppressDoc(int numDoc) throws SuppressException {
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
-			PreparedStatement ps = connect.prepareStatement("DELETE FROM document WHERE id_doc=?");
+			PreparedStatement ps = null;
+			ps = connect.prepareStatement("DELETE FROM document WHERE id_doc=?");
 			ps.setInt(1, numDoc);
-			ps.executeUpdate();
+			synchronized (DELETEKEY) {
+				ps.executeUpdate();
+			}
 			connect.close();
 		} catch (SQLException e) {
 			throw new SuppressException(e.getMessage());

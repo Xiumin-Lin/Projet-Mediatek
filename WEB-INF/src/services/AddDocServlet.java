@@ -38,7 +38,7 @@ public class AddDocServlet extends HttpServlet {
 		List<String> docData = new ArrayList<>();
 		
 		int docType = -1;
-
+		//add general doc data
 		docData.add(request.getParameter("label"));
 		docData.add(request.getParameter("description"));
 		
@@ -48,18 +48,16 @@ public class AddDocServlet extends HttpServlet {
 			e.printStackTrace();
 			System.err.println("Parse Int Error : " + e.getMessage());
 		}
-
-		Mediatek mediatek = Mediatek.getInstance();
-		
+	//add more doc data corresponding to the type
 		switch(docType) {
-			case 1: 
+			case 1: //Book
 				docData.add(request.getParameter("author"));
 				docData.add(request.getParameter("pages")); break;
-			case 2: 
+			case 2: //DVD
 				docData.add(request.getParameter("director"));
 				docData.add(request.getParameter("release_date"));
 				docData.add(request.getParameter("duration")); break;
-			case 3: 
+			case 3: //CD
 				docData.add(request.getParameter("artist")); break;
 			default:
 				request.setAttribute("createStatus", "Fail : the type ID " + docType + " is invalid");
@@ -67,10 +65,13 @@ public class AddDocServlet extends HttpServlet {
 		}
 		
 		try {
+			//check data format, if blank or empty, the data is set at null
 			for(int i=0; i<docData.size(); i++){
 				String trimStr = docData.get(i).trim();
 				docData.set(i, (trimStr.length() > 0) ? trimStr : null);
 			}
+			//add new doc
+			Mediatek mediatek = Mediatek.getInstance();
 			mediatek.newDocument(docType, docData.toArray());
 			request.setAttribute("createStatus", "Document '" + request.getParameter("label") + "' has been created !");
 		} catch (NewDocException e) {
