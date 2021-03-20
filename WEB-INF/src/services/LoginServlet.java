@@ -24,12 +24,12 @@ public class LoginServlet extends HttpServlet {
 			throws IOException, ServletException {
 		//get the login & password provided by the user in the login form
 		String login = request.getParameter("login");
-    String password = request.getParameter("password");
+    	String password = request.getParameter("password");
 		//check if the user exists in the database
 		Mediatek mediatek = Mediatek.getInstance();
 		Utilisateur user = mediatek.getUser(login,password);
 		if(user == null) { 
-			request.setAttribute("userNotFound",true);
+			request.setAttribute("userNotFound","User not found or wrong password for : " + login);
 			//return to login.jsp and indicates that the user is not valid
 			request.getRequestDispatcher("./login.jsp").forward(request, response); 
 		}

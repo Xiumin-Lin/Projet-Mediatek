@@ -20,7 +20,7 @@ public class DeleteDocServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		//check if user exist & is a admin otherwise send to index page
@@ -53,12 +53,17 @@ public class DeleteDocServlet extends HttpServlet {
 			if(doc == null) {
 				request.setAttribute("deleteStatus", "Document not found for ID : " + docIdToDelete);
 			} else {
-				try {
-					mediatek.suppressDoc(docIdToDelete);
-					request.setAttribute("deleteStatus", "Document deleted successfully");
-				} catch (SuppressException e) {
-					e.printStackTrace();
-					request.setAttribute("deleteStatus", "Delete Fail : " + e.getMessage());
+				//check if the doc is borrowed, if true, admin can't delete the doc
+				if((int) doc.data()[3] > 0) {
+					request.setAttribute("deleteStatus", "Can't Delete the document " + docIdToDelete + ", it's borrowed by the user ID : " + doc.data()[3]);
+				} else {
+					try {
+						mediatek.suppressDoc(docIdToDelete);
+						request.setAttribute("deleteStatus", "Document deleted successfully");
+					} catch (SuppressException e) {
+						e.printStackTrace();
+						request.setAttribute("deleteStatus", "Delete Fail : " + e.getMessage());
+					}
 				}
 			}
 		}
