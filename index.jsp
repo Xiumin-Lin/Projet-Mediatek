@@ -19,18 +19,18 @@
 						if(session.isNew() || user == null){
 							out.print("Please log in to use the Mediatek App v.2021 !");
 							out.print("<form action='./login.jsp'>");
-							out.print("<button class='mt-4 bg-green-700 text-white py-2 px-6 rounded-lg'>Login</button>");
+							out.print("<button class='mb-4 mt-4 bg-green-700 text-white py-2 px-6 rounded-lg'>Login</button>");
 							out.print("</form>");
 						}else if(user != null){
 							out.print("Hi " + user.login() + " !");
 							Boolean isAdmin = (Boolean) user.data()[4];
 							if(isAdmin){
 								out.print("<form action='./mediatek.jsp'>");
-								out.print("<button class='mt-4 bg-indigo-500 text-white py-2 px-6 rounded-lg'>Manage Mediatek</button>");
+								out.print("<button class='mb-4 mt-4 bg-indigo-500 text-white py-2 px-6 rounded-lg'>Manage Mediatek</button>");
 								out.print("</form>");
 							}
 							out.print("<form action='./logoutServlet'>");
-							out.print("<button class='mt-4 bg-red-500 text-white py-2 px-6 rounded-lg'>Logout</button>");
+							out.print("<button class='mb-4 mt-4 bg-red-500 text-white py-2 px-6 rounded-lg'>Logout</button>");
 							out.print("</form>");
 						}
 						String noAllow = (String) request.getAttribute("serviceNoAllow");

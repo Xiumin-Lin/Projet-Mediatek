@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -131,10 +132,64 @@ public class MediatekData implements PersistentMediatek {
 	// ajoute un nouveau document - exception a definir
 	@Override
 	public void newDocument(int type, Object... args) throws NewDocException {
-		// args[0] -> le titre
-		// args [1] --> l'auteur
+		// args[0] --> le titre
+		// args[1] --> l'auteur
 		// etc en fonction du type et des infos optionnelles
 		
+		String insertTypeDocSQL;
+		int nbOptinalArgs = -1;
+		//set insertTypeDocSQL & nbOptinalArgs depending of the doc type
+		switch (type) {
+			case 1: //Book(id_book,artist)
+				insertTypeDocSQL = "INSERT INTO book VALUES(?,?,?)";
+				nbOptinalArgs = 2; break;
+			case 2: //DVD(id_dvd,artist)
+				insertTypeDocSQL = "INSERT INTO dvd VALUES(?,?,?,?)";
+				nbOptinalArgs = 3; break;
+			case 3: //CD(id_cd,artist)
+				insertTypeDocSQL = "INSERT INTO cd VALUES(?,?)";
+				nbOptinalArgs = 1; break;
+			default:
+				throw new NewDocException("Invalide Type of document !");
+		}
+		
+		try {
+			Connection connect = DriverManager.getConnection(url, user, pwd);
+			//insert/add a new general document
+			String insertDocSQL = "INSERT INTO `document`(`title`,`description`,`id_type`) " + "VALUES(?,?,?)";
+			PreparedStatement ps1 = connect.prepareStatement(insertDocSQL, Statement.RETURN_GENERATED_KEYS);
+			ps1.setString(1, (String) args[0]); //--> title
+			ps1.setString(2, (String) args[1]); //--> description
+			ps1.setInt(3, type);
+			int insertRow = ps1.executeUpdate();
+			if (insertRow == 0) {
+        		throw new NewDocException("Creating document failed !");
+			} 
+			//retrieves the index of the new created document
+			ResultSet generatedKeys = ps1.getGeneratedKeys();
+			int newDocId = -1;
+			if (generatedKeys.next()) {
+				newDocId = generatedKeys.getInt(1);
+	    	}
+			ps1.close();
+			
+			//insert/add the typed document associate to the general doc create earlier
+			if(newDocId > 0) {
+				PreparedStatement ps2 = connect.prepareStatement(insertTypeDocSQL);
+				ps2.setInt(1, newDocId);
+				for(int i=1; i<=nbOptinalArgs; i++) {
+					ps2.setObject(i+1, args[i+1]);
+				}
+				insertRow = ps2.executeUpdate();
+				if (insertRow == 0) {
+	        		throw new NewDocException("Creating typed document failed !");
+				}
+				ps2.close();
+			}
+			connect.close();
+		} catch (SQLException e) {
+			throw new NewDocException(e.getMessage());
+		}
 	}
 
 	// supprime un document - exception a definir

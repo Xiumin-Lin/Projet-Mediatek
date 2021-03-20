@@ -23,8 +23,7 @@ public class DeleteDocServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		int docIdToDelete = -1;
-		//check if user exist & is a admin
+		//check if user exist & is a admin otherwise send to index page
 		HttpSession session = request.getSession(true);
 		Utilisateur user = (Utilisateur) session.getAttribute("user");
 		if(user == null) {
@@ -34,7 +33,9 @@ public class DeleteDocServlet extends HttpServlet {
 			request.setAttribute("serviceNoAllow", "User not allowed to delete a document, make sure you are an librarian !");
 			request.getRequestDispatcher("./index.jsp").forward(request, response);
 		}
-		
+
+		int docIdToDelete = -1;
+
 		try {
 			docIdToDelete = Integer.parseInt(request.getParameter("deleteDocID"));
 		} catch (Exception e) {
