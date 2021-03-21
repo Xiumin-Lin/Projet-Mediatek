@@ -78,23 +78,40 @@ ADD CONSTRAINT `FK_cd_doc`
 	ON DELETE CASCADE
 ;
 -- INSERT USER
-INSERT INTO `user`(`login`,`pwd`,`isAdmin`) VALUES("Admin@mediatek.com","admin",1);
-INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) 
-VALUES("Xiumin.lin@laposte.net","1234","Xiumin Lin",20,0);
+INSERT INTO `user`(`login`,`pwd`,`isAdmin`) VALUES("admin@mediatek.com","admin",1);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("xiumin.lin@laposte.net","1234","Xiumin LIN",20,0);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("steven-van@outlook.fr","56782","Steven VAN",19,0);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("harry.potter@hogwarts.com","gryffindor","Harry POTTER", 12,0);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("tony.stark@starkindustries.com","ironman","Tony STARK", 53,0);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("michael.jackson@gmail.com","kingofpop","Michael JACKSON", 50,0);
 -- INSERT TYPE
 INSERT INTO `type`(`typeName`) VALUES("book");
 INSERT INTO `type`(`typeName`) VALUES("dvd");
 INSERT INTO `type`(`typeName`) VALUES("cd");
 -- INSERT DOCUMENT
+INSERT INTO `document`(`title`,`description`, `id_borrower`,`id_type`) 
+VALUES("Harry Potter and the Philosopher's Stone","First Harry Potter novel", 4 , 1);
 INSERT INTO `document`(`title`,`description`,`id_type`) 
-VALUES("Le Parfum","Le Parfum, sous-titré Histoire d'un meurtrier",1);
-INSERT INTO `document`(`title`,`id_type`) VALUES("Les Évadés",2);
-INSERT INTO `document`(`title`,`id_type`) VALUES("Album inconnu",3);
+VALUES("Harry Potter and the Chamber of Secrets","Second Harry Potter novel", 1);
+INSERT INTO `document`(`title`,`description`,`id_type`) 
+VALUES("Harry Potter and the Prisoner of Azkaban","Third Harry Potter novel", 1);
+INSERT INTO `document`(`title`, `description`, `id_borrower`, `id_type`) VALUES("Iron Man", "First Iron Man movie", 5, 2);
+INSERT INTO `document`(`title`, `description`, `id_type`) VALUES("Iron Man 2", "Second Iron Man movie", 2);
+INSERT INTO `document`(`title`, `description`, `id_type`) VALUES("Iron Man 3", "Third Iron Man movie", 2);
+INSERT INTO `document`(`title`,`id_borrower`, `id_type`) VALUES("Thriller 25", 6, 3);
+INSERT INTO `document`(`title`, `id_type`) VALUES("Bad", 3);
+INSERT INTO `document`(`title`, `id_type`) VALUES("Off the Wall", 3);
 -- INSERT BOOK
-INSERT INTO `book` VALUES(1,"Patrick Susking",300);
+INSERT INTO `book` VALUES(1,"J.K. Rowling",308);
+INSERT INTO `book` VALUES(2,"J.K. Rowling",384);
+INSERT INTO `book` VALUES(3,"J.K. Rowling",480);
 -- INSERT DVD
-INSERT INTO `dvd` VALUES(2,"Frank Darabont",1994,142);
+INSERT INTO `dvd` VALUES(4,"Jon Favreau", 2008, 126);
+INSERT INTO `dvd` VALUES(5,"Jon Favreau", 2010, 125);
+INSERT INTO `dvd` VALUES(6,"Shane Black", 2013, 130);
 -- INSERT CD
-INSERT INTO `cd` VALUES(3,NULL);
+INSERT INTO `cd` VALUES(7, "Michael Jackson");
+INSERT INTO `cd` VALUES(8, "Michael Jackson");
+INSERT INTO `cd` VALUES(9, "Michael Jackson");
 
 COMMIT;
