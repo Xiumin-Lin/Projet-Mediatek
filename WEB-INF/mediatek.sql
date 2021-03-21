@@ -96,17 +96,17 @@ INSERT INTO `document`(`title`,`description`, `id_borrower`,`id_type`)
 VALUES("Harry Potter and the Philosopher's Stone","First Harry Potter novel", 4 , 1);
 INSERT INTO `document`(`title`,`description`,`id_borrower`,`id_type`) 
 VALUES("Harry Potter and the Chamber of Secrets","Second Harry Potter novel", 4 , 1);
-INSERT INTO `document`(`title`,`description`,`id_borrower`, `id_type`) 
-VALUES("Harry Potter and the Prisoner of Azkaban","Third Harry Potter novel", 4 , 1);
 INSERT INTO `document`(`title`,`description`, `id_type`) 
+VALUES("Harry Potter and the Prisoner of Azkaban","Third Harry Potter novel", 1);
+INSERT INTO `document`(`title`,`description`,`id_type`) 
 VALUES("Lord of the Ring : Fellowship of Ring","First Lord of the Ring novel", 1);
 INSERT INTO `document`(`title`, `description`, `id_borrower`, `id_type`) VALUES("Iron Man", "First Iron Man movie", 5, 2);
 INSERT INTO `document`(`title`, `description`, `id_borrower`, `id_type`) VALUES("Iron Man 2", "Second Iron Man movie", 5, 2);
-INSERT INTO `document`(`title`, `description`, `id_borrower`, `id_type`) VALUES("Iron Man 3", "Third Iron Man movie", 5, 2);
+INSERT INTO `document`(`title`, `description`, `id_type`) VALUES("Iron Man 3", "Third Iron Man movie", 2);
 INSERT INTO `document`(`title`, `description`, `id_type`) VALUES("Spider-Man: Homecoming", "First Marvel Spider Man movie", 2);
 INSERT INTO `document`(`title`, `description`, `id_borrower`, `id_type`) VALUES("Thriller 25", "Michael Jackson Album",6, 3);
 INSERT INTO `document`(`title`, `description`, `id_borrower`, `id_type`) VALUES("Bad","Michael Jackson Album",  6, 3);
-INSERT INTO `document`(`title`, `description`, `id_borrower`, `id_type`) VALUES("Off the Wall","Michael Jackson Album", 6, 3);
+INSERT INTO `document`(`title`, `description`, `id_type`) VALUES("Off the Wall","Michael Jackson Album", 3);
 INSERT INTO `document`(`title`, `description`, `id_type`) VALUES("Love in the Future", "John Legend Album", 3);
 -- INSERT BOOK
 INSERT INTO `book` VALUES(1,"J.K. Rowling",308);
