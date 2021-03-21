@@ -79,8 +79,8 @@ ADD CONSTRAINT `FK_cd_doc`
 ;
 -- INSERT USER
 INSERT INTO `user`(`login`,`pwd`,`isAdmin`) VALUES("admin@mediatek.com","admin",1);
-INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("xiumin.lin@laposte.net","1234","Xiumin LIN",20,0);
-INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("steven-van@outlook.fr","56782","Steven VAN",19,0);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("xiumin.lin@laposte.net","1234","Xiumin LIN",20,1);
+INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("steven-van@outlook.fr","56782","Steven VAN",19,1);
 INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("harry.potter@hogwarts.com","gryffindor","Harry POTTER", 12,0);
 INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("tony.stark@starkindustries.com","ironman","Tony STARK", 53,0);
 INSERT INTO `user`(`login`,`pwd`,`name`,`age`,`isAdmin`) VALUES("michael.jackson@gmail.com","kingofpop","Michael JACKSON", 50,0);
