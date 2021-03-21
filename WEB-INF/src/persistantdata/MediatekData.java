@@ -177,18 +177,18 @@ public class MediatekData implements PersistentMediatek {
 		// etc en fonction du type et des infos optionnelles
 		
 		String insertTypeDocSQL;
-		int nbOptinalArgs = -1;
-		//set insertTypeDocSQL & nbOptinalArgs depending of the doc type
+		int nbOptionalArgs = -1;
+		//set insertTypeDocSQL & nbOptionalArgs depending of the doc type
 		switch (type) {
 			case 1: //Book(id_book,artist)
 				insertTypeDocSQL = "INSERT INTO book VALUES(?,?,?)";
-				nbOptinalArgs = 2; break;
+				nbOptionalArgs = 2; break;
 			case 2: //DVD(id_dvd,artist)
 				insertTypeDocSQL = "INSERT INTO dvd VALUES(?,?,?,?)";
-				nbOptinalArgs = 3; break;
+				nbOptionalArgs = 3; break;
 			case 3: //CD(id_cd,artist)
 				insertTypeDocSQL = "INSERT INTO cd VALUES(?,?)";
-				nbOptinalArgs = 1; break;
+				nbOptionalArgs = 1; break;
 			default:
 				throw new NewDocException("Invalide Type of document !");
 		}
@@ -220,7 +220,7 @@ public class MediatekData implements PersistentMediatek {
 			if(newDocId > 0) {
 				PreparedStatement ps2 = connect.prepareStatement(insertTypeDocSQL);
 				ps2.setInt(1, newDocId);
-				for(int i=1; i<=nbOptinalArgs; i++) {
+				for(int i=1; i<=nbOptionalArgs; i++) {
 					ps2.setObject(i+1, args[i+1]);
 				}
 				synchronized (ADDKEY) {
