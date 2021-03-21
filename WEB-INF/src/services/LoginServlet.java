@@ -22,18 +22,18 @@ public class LoginServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws IOException, ServletException {
-		//get the login & password provided by the user in the login form
+		// Get the login & password provided by the user in the login form
 		String login = request.getParameter("login");
     	String password = request.getParameter("password");
-		//check if the user exists in the database
+		// Check if the user exists in the database
 		Mediatek mediatek = Mediatek.getInstance();
 		Utilisateur user = mediatek.getUser(login,password);
 		if(user == null) { 
 			request.setAttribute("userNotFound","User not found or wrong password for : " + login);
-			//return to login.jsp and indicates that the user is not valid
+			// Return to login.jsp and indicates that the user is not valid
 			request.getRequestDispatcher("./login.jsp").forward(request, response); 
 		}
-		//return current session, if it does not exist, then it will create a new session
+		// Return current session, if it does not exist, then it will create a new session
 		HttpSession session = request.getSession(true);
 		session.setAttribute("user", user);
 		

@@ -23,10 +23,10 @@ public class MediatekData implements PersistentMediatek {
 	
 	private static final Object ADDKEY = new Object();
 	private static final Object DELETEKEY = new Object();
+	private static final String pwd = "";
 	private static final String url = "jdbc:mysql://localhost:3306/mediatek";
 	private static final String user = "root";
-	private static final String pwd = "";
-	
+
 	private MediatekData() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -42,16 +42,16 @@ public class MediatekData implements PersistentMediatek {
 		List<Document> catalogue = new ArrayList<>();
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
-			//retrieve all doc ID corresponding to the chosen type
+			// Retrieves all doc ID corresponding to the selected type
 			PreparedStatement ps = connect.prepareStatement("SELECT id_doc FROM document WHERE id_type=?");
 			ps.setInt(1, type);
 			ResultSet res = null;
 			synchronized (ADDKEY) { 
-				synchronized (DELETEKEY) { //exceute sql only if no add & delete action is running
+				synchronized (DELETEKEY) { // Executes request only if there is no add or delete action running
 					res = ps.executeQuery();
 				}
 			}
-			//retrieve each doc by their ID & add in catalogue
+			// Retrieves each doc by their ID & add in catalogue
 			while(res.next()) {
 				Document doc = getDocument(res.getInt(1));
 				if(doc != null)
@@ -62,7 +62,7 @@ public class MediatekData implements PersistentMediatek {
 			System.err.println("Error connection in db : " + e.getMessage());
 			e.printStackTrace();
 		}
-		//return catalogue if there a one doc or more, otherwise return null
+		// Check if catalogue contains at least one doc, else return null
 		return (catalogue.size() > 0) ? catalogue : null;
 	}
 
@@ -81,9 +81,9 @@ public class MediatekData implements PersistentMediatek {
 			
 			while(res.next()) {
 				userPwd = res.getString(2);
-				data.add(res.getInt(1)); 		//[0] --> user id
+				data.add(res.getInt(1)); //[0] --> user id
 				data.add(res.getString(3)); //[1] --> name
-				data.add(res.getInt(4));		//[2] --> age
+				data.add(res.getInt(4)); //[2] --> age
 				data.add(res.getString(5));	//[3] --> address
 				Boolean isAdmin = (res.getInt(6) == 1) ? true : false;
 				data.add(isAdmin); //[4] => isAdmin
@@ -93,11 +93,11 @@ public class MediatekData implements PersistentMediatek {
 			System.err.println("Error connection in db : " + e.getMessage());
 			e.printStackTrace();
 		}
-		//check pwd
+		// Check password
 		if(password.equals(userPwd)) {
 			return new User(login,password,data.toArray());
 		}
-		//wrong pwd
+		// Wrong password
 		return null;
 	}
 
@@ -110,7 +110,7 @@ public class MediatekData implements PersistentMediatek {
 		List<Object> data = new ArrayList<>();
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
-			//retrieve the general doc data corresponding to id doc
+			// Retrieves the general doc data corresponding to id doc
 			String getDocSQL = 	"SELECT title, description, id_borrower, id_type "
 												+ "FROM document "
 												+ "WHERE id_doc=?";
@@ -125,15 +125,15 @@ public class MediatekData implements PersistentMediatek {
 			int type = -1;
 			while(res.next()) {
 				type = res.getInt("id_type");
-				data.add(numDocument);			//[0] --> doc id
-				data.add(res.getString(1));	//[1] --> title
-				data.add(res.getString(2));	//[2] --> description
-				data.add(res.getInt(3));		//[3] --> id_borrower, if res.getInt(3) is null, return 0
-				data.add(type);							//[4] --> type
+				data.add(numDocument); // [0] --> doc id
+				data.add(res.getString(1));	// [1] --> title
+				data.add(res.getString(2));	// [2] --> description
+				data.add(res.getInt(3)); // [3] --> id_borrower, if res.getInt(3) is null, return 0
+				data.add(type); //[4] --> type
 			}
 			ps.close();
 			
-			//set the statement corresponding to the doc type
+			// Set the statement corresponding to the doc type
 			String getTypeDocSQL;
 			switch (type) {
 				case 1: getTypeDocSQL = "SELECT * FROM book WHERE id_book=?"; break;
@@ -142,7 +142,7 @@ public class MediatekData implements PersistentMediatek {
 				default:
 					throw new SQLException("The statement to prepare is null");
 			}
-			//retrieve the typed doc data corresponding to id doc
+			// Retrieve the typed doc data corresponding to id doc
 			PreparedStatement ps2 = connect.prepareStatement(getTypeDocSQL);
 			ps2.setObject(1, data.get(0)); //data.get(0) --> id_doc
 			ResultSet typeDocRes = null;
@@ -158,14 +158,14 @@ public class MediatekData implements PersistentMediatek {
 				}
 			}
 			ps2.close();
-			//insert doc data in the class corresponding to his type
+			// Insert doc data in the class corresponding to his type
 			doc = DocumentFactory.create(type, data.toArray());
 			connect.close();
 		} catch (SQLException e) {
 			System.err.println("Error connection in db : " + e.getMessage());
 			e.printStackTrace();
 		}
-		//return doc if sql requests success, otherwise return null
+		// Return doc if SQL requests success, otherwise return null
 		return doc;
 	}
 
@@ -178,15 +178,15 @@ public class MediatekData implements PersistentMediatek {
 		
 		String insertTypeDocSQL;
 		int nbOptionalArgs = -1;
-		//set insertTypeDocSQL & nbOptionalArgs depending of the doc type
+		// Set insertTypeDocSQL & nbOptionalArgs depending of the doc type
 		switch (type) {
-			case 1: //Book(id_book,artist)
+			case 1: // Book(id_book,artist)
 				insertTypeDocSQL = "INSERT INTO book VALUES(?,?,?)";
 				nbOptionalArgs = 2; break;
-			case 2: //DVD(id_dvd,artist)
+			case 2: // DVD(id_dvd,artist)
 				insertTypeDocSQL = "INSERT INTO dvd VALUES(?,?,?,?)";
 				nbOptionalArgs = 3; break;
-			case 3: //CD(id_cd,artist)
+			case 3: // CD(id_cd,artist)
 				insertTypeDocSQL = "INSERT INTO cd VALUES(?,?)";
 				nbOptionalArgs = 1; break;
 			default:
@@ -195,11 +195,11 @@ public class MediatekData implements PersistentMediatek {
 		
 		try {
 			Connection connect = DriverManager.getConnection(url, user, pwd);
-			//insert/add a new general document
+			// Adds a new general document
 			String insertDocSQL = "INSERT INTO `document`(`title`,`description`,`id_type`) " + "VALUES(?,?,?)";
 			PreparedStatement ps1 = connect.prepareStatement(insertDocSQL, Statement.RETURN_GENERATED_KEYS);
-			ps1.setString(1, (String) args[0]); //--> title
-			ps1.setString(2, (String) args[1]); //--> description
+			ps1.setString(1, (String) args[0]); // Title
+			ps1.setString(2, (String) args[1]); // Description
 			ps1.setInt(3, type);
 			int nbInsertedRow = 0;
 			synchronized(ADDKEY) {
@@ -208,15 +208,15 @@ public class MediatekData implements PersistentMediatek {
 			if (nbInsertedRow == 0) {
         		throw new NewDocException("Creating document failed !");
 			} 
-			//retrieves the index of the new created document
+			// Retrieves the index of the new created document
 			ResultSet generatedKeys = ps1.getGeneratedKeys();
 			int newDocId = -1;
 			if (generatedKeys.next()) {
 				newDocId = generatedKeys.getInt(1);
 	    }
 			ps1.close();
-			nbInsertedRow = 0; //reset number of insertRow
-			//insert/add the typed document associate to the general doc create earlier
+			nbInsertedRow = 0; // Resets number of insertRow
+			// Insert the typed document associate to the general doc create earlier
 			if(newDocId > 0) {
 				PreparedStatement ps2 = connect.prepareStatement(insertTypeDocSQL);
 				ps2.setInt(1, newDocId);

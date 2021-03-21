@@ -25,7 +25,7 @@ public class DeleteDocServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		//check if user exist & is a admin otherwise send to index page
+		// Check if user exist & is a admin, else send to index page
 		HttpSession session = request.getSession(true);
 		Utilisateur user = (Utilisateur) session.getAttribute("user");
 		if(user == null) {
@@ -47,11 +47,11 @@ public class DeleteDocServlet extends HttpServlet {
 		if(docIdToDelete < 0) {
 			request.setAttribute("deleteStatus", "The ID should be a positive number");
 		} else {
-			//check if the document exists in the database
+			// Check if the document exists in the database
 			Mediatek mediatek = Mediatek.getInstance();
 			synchronized (DELETEKEY) {
 				Document doc = mediatek.getDocument(docIdToDelete);
-				// if the document does not exist then it well set the attribute deleteStatus with a error msg, 
+				// If the document does not exist then it will set the attribute deleteStatus with a error message, 
 				// else it will delete the document using its ID
 				if(doc == null) {
 					request.setAttribute("deleteStatus", "Document not found for ID : " + docIdToDelete);

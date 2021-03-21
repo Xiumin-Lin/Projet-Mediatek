@@ -20,7 +20,7 @@ public class LogoutServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		//return current session if exists, if not it return null, it will not create a new session
+		// Return current session if exists, else return null, it will not create a new session
 		HttpSession session = request.getSession(false);
 		if(session != null)
 			session.invalidate(); //delete session
